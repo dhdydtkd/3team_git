@@ -18,8 +18,8 @@ def job1():
                 all_files = os.listdir(os.path.join(new_line))
                 for file in all_files:
                     if file.endswith('.xlsx') or file.endswith('.docx') or file.endswith('.txt') or file.endswith('.hwp') or file.endswith('.log'):
-                        
-                        print(f"[{new_line}/{file}] 해당 경로에 존재합니다")
+                        return
+                        #print(f"[{new_line}/{file}] 해당 경로에 존재합니다")
                     else:
                         print("파일이 없습니다.")
             else:

@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from openpyxl import load_workbook
 from docx import Document
+from io import BytesIO
 
 def convert_to_txt(file): #DataFrame을 |으로 구분된 CSV 파일로 변환
     df = pd.read_excel(file)
@@ -42,12 +43,9 @@ if uploaded_file:
     st.download_button(label='Download TXT', data=convert_to_txt(uploaded_file), file_name=f'{uploaded_filename}.txt')
     st.download_button(label='Download JSON', data=convert_to_json(uploaded_file), file_name=f'{uploaded_filename}.json')
     st.download_button(label='Download LOG', data=convert_to_log(uploaded_file), file_name=f'{uploaded_filename}.log')
-    
-    docx_file = convert_to_docx(uploaded_file)
-    docx_filename = 'output.docx'
-    docx_file.save(docx_filename)
-    with open(docx_filename, 'rb') as f:
-        docx_bytes = f.read()
-    st.download_button(label='Download DOCX', data=docx_bytes, file_name=f'{uploaded_filename}.docx')
 
-    
+    docx_file = convert_to_docx(uploaded_file)
+    docx_content = BytesIO()
+    docx_file.save(docx_content) 
+    docx_content.seek(0)
+    st.download_button(label='Download DOCX', data=docx_content, file_name=f'{uploaded_filename}.docx')

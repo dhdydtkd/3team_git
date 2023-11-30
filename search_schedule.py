@@ -7,7 +7,6 @@ import create_faker_data as cfd
 
 def job1():
     dir_path = ('static/search_dir_list.txt')
-    print(f"os.path.isdir('static') : {os.path.isdir('static')}")
     with open(dir_path, 'r', encoding='utf8') as f :
         lines = f.readlines()
         for line in lines :
@@ -18,8 +17,7 @@ def job1():
                 all_files = os.listdir(os.path.join(new_line))
                 for file in all_files:
                     if file.endswith('.xlsx') or file.endswith('.docx') or file.endswith('.txt') or file.endswith('.hwp') or file.endswith('.log'):
-                        return
-                        #print(f"[{new_line}/{file}] 해당 경로에 존재합니다")
+                        print(f"[{new_line}/{file}] 해당 경로에 존재합니다")
                     else:
                         print("파일이 없습니다.")
             else:

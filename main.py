@@ -1,14 +1,16 @@
 
 import search_schedule as sschedule
 import streamlit as st
-
+import file_strr as fs
 
 
 if __name__ == "__main__":
 
-    #sschedule.job1()
+    sschedule.job1()
     # sschedule.job2()
-    #sschedule.search_schedule()
+    sschedule.search_schedule()
+
+    fs.search_dir_modif()
 
     st.title("보안성 검사를 위한 데이터 제공")
 
@@ -33,5 +35,5 @@ if __name__ == "__main__":
             print(f'uploaded_file : [{uploaded_file}]')
         if uploaded_file.name.endswith('.log'):
             print(f'uploaded_file : [{uploaded_file}]')
+            
     
-    #streamlit run e:\3team_project\main.py

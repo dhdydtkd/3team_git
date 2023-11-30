@@ -11,9 +11,8 @@ import pandas as pd
 import openpyxl
 
 # Slack channel to send the message to
-SLACK_API_TOKEN = 'xoxb-6253138637332-6243077942519-i3CVhlJVUVhkslG7hkyfbBNM'
 
-def sendSlackWebhook(file_path,error_report):
+def sendSlackWebhook(file_path,SLACK_API_TOKEN):
     client = WebClient(token=SLACK_API_TOKEN)
     try:
         response = client.files_upload(
@@ -25,10 +24,10 @@ def sendSlackWebhook(file_path,error_report):
     except SlackApiError as e:
         print(f"오류 발생 {e}")
 
-def sendsmtp(file_name,error_report):        
-    load_dotenv()
-    SECRET_ID = os.getenv('ID')
-    SECRET_PASS = os.getenv('PASS')
+def sendsmtp(ID_PASS,file_name,error_report):        
+    
+    SECRET_ID = ID_PASS[0]
+    SECRET_PASS = ID_PASS[1]
 
     smtp= smtplib.SMTP('smtp.naver.com',587)
     smtp.ehlo()
@@ -73,78 +72,78 @@ def sendsmtp(file_name,error_report):
     smtp.sendmail(myemail,youremail,msg.as_string())
     smtp.quit()
 
+def check(file_path,ID_PASS,SLACK_API_TOKEN):
+    file_name = file_path
+    wb = openpyxl.load_workbook(file_name)
+    sheet = wb.active
 
-file_name = 'member_data/2023-11-30_insert_member.xlsx'
-wb = openpyxl.load_workbook(file_name)
-sheet = wb.active
+    info_warning_line = []
+    safe_warning_line = []
 
-info_warning_line = []
-safe_warning_line = []
-
-info_warning = False
-safe_warning = False
-phone_pattern = r'\d{3}-\d{3,4}-\d{4}'
-email_pattern = r"[a-zA-Z0-9._+-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
-for index, row in enumerate(sheet.iter_rows()):
-    for i, cell in enumerate(row[:7]):
-        if re.findall(phone_pattern,str(cell.value)):
-            info_warning = True
-        elif re.findall(email_pattern,str(cell.value)):
-            info_warning = True
-        if i==6 and cell.value==False : 
-            safe_warning = True
-    if info_warning:
-        info_warning_line.append(index)
-    if safe_warning:
-        safe_warning_line.append(index)
     info_warning = False
     safe_warning = False
-
-#print(f'info_warning_line : {info_warning_line}');
-#print(f'safe_warning_line : {safe_warning_line}');
-
-if file_name.endswith('.txt'):
-    info_warning = False
-    safe_warning = False
-    with open(f'{file_name}','r',encoding='utf-8') as f:
-        lines = f.readlines()
-        head_info=list(map(str,lines[0].split('|')))
-        info_warning = False
-        for index, line in enumerate(lines[1:]):
-            if re.findall(phone_pattern,line.split('|')[1]):
+    phone_pattern = r'\d{3}-\d{3,4}-\d{4}'
+    email_pattern = r"[a-zA-Z0-9._+-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
+    for index, row in enumerate(sheet.iter_rows()):
+        for i, cell in enumerate(row[:7]):
+            if re.findall(phone_pattern,str(cell.value)):
                 info_warning = True
-            elif re.findall(email_pattern,line.split('|')[2]):
+            elif re.findall(email_pattern,str(cell.value)):
                 info_warning = True
-            if line.split('|')[6] == 'False':
+            if i==6 and cell.value==False : 
                 safe_warning = True
-            if info_warning:
-                info_warning_line.append(index+1)
-            if safe_warning:
-                safe_warning_line.append(index+1)
-            info_warning = False
-            safe_warning = False
+        if info_warning:
+            info_warning_line.append(index)
+        if safe_warning:
+            safe_warning_line.append(index)
+        info_warning = False
+        safe_warning = False
 
     #print(f'info_warning_line : {info_warning_line}');
     #print(f'safe_warning_line : {safe_warning_line}');
 
-warning_line = [0]
-# 0=위험정보 검출안됨, 1=info_warning_line, 2=ip_warning_line, 3=ip&info_warning_line
-if info_warning_line:
-    warning_line.append(info_warning_line)
-if safe_warning_line:
-    warning_line.append(safe_warning_line)
+    if file_name.endswith('.txt'):
+        info_warning = False
+        safe_warning = False
+        with open(f'{file_name}','r',encoding='utf-8') as f:
+            lines = f.readlines()
+            head_info=list(map(str,lines[0].split('|')))
+            info_warning = False
+            for index, line in enumerate(lines[1:]):
+                if re.findall(phone_pattern,line.split('|')[1]):
+                    info_warning = True
+                elif re.findall(email_pattern,line.split('|')[2]):
+                    info_warning = True
+                if line.split('|')[6] == 'False':
+                    safe_warning = True
+                if info_warning:
+                    info_warning_line.append(index+1)
+                if safe_warning:
+                    safe_warning_line.append(index+1)
+                info_warning = False
+                safe_warning = False
 
-if info_warning_line and safe_warning_line:
-    warning_line[0] = 3
-    sendSlackWebhook(file_name,warning_line)
-    sendsmtp(file_name,warning_line)
-elif info_warning_line:
-    warning_line[0] = 1
-    sendSlackWebhook(file_name,warning_line)
-    sendsmtp(file_name,warning_line)
-elif safe_warning_line:
-    warning_line[0] = 2
-    sendSlackWebhook(file_name,warning_line)
-    sendsmtp(file_name,warning_line)
-else:
-    print('위험 정보 검출 안됨')
+        #print(f'info_warning_line : {info_warning_line}');
+        #print(f'safe_warning_line : {safe_warning_line}');
+
+    warning_line = [0]
+    # 0=위험정보 검출안됨, 1=info_warning_line, 2=ip_warning_line, 3=ip&info_warning_line
+    if info_warning_line:
+        warning_line.append(info_warning_line)
+    if safe_warning_line:
+        warning_line.append(safe_warning_line)
+
+    if info_warning_line and safe_warning_line:
+        warning_line[0] = 3
+        sendSlackWebhook(file_name,warning_line,SLACK_API_TOKEN)
+        sendsmtp(ID_PASS,file_name,warning_line)
+    elif info_warning_line:
+        warning_line[0] = 1
+        sendSlackWebhook(file_name,warning_line,SLACK_API_TOKEN)
+        sendsmtp(ID_PASS,file_name,warning_line)
+    elif safe_warning_line:
+        warning_line[0] = 2
+        sendSlackWebhook(file_name,warning_line,SLACK_API_TOKEN)
+        sendsmtp(ID_PASS,file_name,warning_line)
+    else:
+        print('위험 정보 검출 안됨')

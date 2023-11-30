@@ -1,0 +1,19 @@
+import streamlit as st
+import os
+
+st.title("파일검사")
+
+path = st.file_uploader("파일을 넣어주세요")
+
+if st.button("추가"):
+    other_path = st.file_uploader("더 추가할 파일을 넣어주세요")
+    if st.button("삭제"):
+        del other_path, 
+
+if st.button("검사"):
+    dir_path = 'path'
+    for file in dir_path:
+    file_path = os.path.join(dir_path, file)
+    with open(file_path,'r', encoding='utf-8') as f:
+        print(f.read())
+st.success("검사가 완료됐습니다.")

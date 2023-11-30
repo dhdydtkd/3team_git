@@ -74,7 +74,7 @@ def sendsmtp(file_name,error_report):
     smtp.quit()
 
 
-file_name = '3team_git/member_data/2023-11-30_insert_member.xlsx'
+file_name = 'member_data/2023-11-30_insert_member.xlsx'
 wb = openpyxl.load_workbook(file_name)
 sheet = wb.active
 
@@ -102,9 +102,6 @@ for index, row in enumerate(sheet.iter_rows()):
 
 #print(f'info_warning_line : {info_warning_line}');
 #print(f'safe_warning_line : {safe_warning_line}');
-
-info_warning_line = []
-safe_warning_line = []
 
 if file_name.endswith('.txt'):
     info_warning = False

@@ -110,4 +110,4 @@ if __name__ == "__main__":
                 worksheet.cell(row=index+2, column=11, value=False)
             worksheet.cell(row=index+2, column=12, value=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             time.sleep(1)
-    workbook.save(f'{datetime.now().strftime('%Y-%m-%d')}_insert_member.xlsx')
+    workbook.save(f'member_data/{datetime.now().strftime('%Y-%m-%d')}_insert_member.xlsx')

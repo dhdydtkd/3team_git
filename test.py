@@ -34,7 +34,7 @@ def text_check(dir_path):
         
 #아직 안됨
 def docx_checker(file_Name):
-    doc = Document('D:\team_3\dummy\templates.docx')
+    doc = Document('D:\\team_3\\dummy\\templates.docx')
     print(11)
     # 이름 추출을 위한 정규식 패턴
     name_pattern = re.compile(r'\b[A-Za-z]+(?: [A-Za-z]+)?\b')
@@ -44,16 +44,17 @@ def docx_checker(file_Name):
 
     # 전화번호 추출을 위한 정규식 패턴
     phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b')
-
+    def mask_name(match):
+        name = match.group(0)
+        # 이름에서 아이디 부분만 추출하여 마스킹 (예: John Doe -> J*** D**)
+        masked_name = ' '.join([name[0] + '*' * (len(part) - 1) if part.isalpha() else part for part in name.split()])
+        return masked_name
+    
     for paragraph in doc.paragraphs:
-        if name_pattern in paragraph.text:
-            paragraph.text = paragraph.text.replace(name_pattern, '조정원')
-        elif email_pattern in paragraph.text:
-            paragraph.text = paragraph.text.replace(email_pattern, 'a@a.com')
-        elif phone_pattern in paragraph.text:
-            paragraph.text = paragraph.text.replace(phone_pattern, '200')
-    doc_file = 'file_Name.docx'
-    doc.save(doc_file)
+        print (paragraph.text)
+        name_pattern.sub(mask_name,(paragraph.text))
+    
+    doc.save('templates')
 
 
 # txt, log, py 확인

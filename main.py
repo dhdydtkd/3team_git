@@ -1,14 +1,13 @@
 
 import search_schedule as sschedule
 import streamlit as st
-import file_strr as fs
+import search_dir_list as fs
 
 
 if __name__ == "__main__":
 
-    sschedule.job1()
     # sschedule.job2()
-    sschedule.search_schedule()
+    #sschedule.search_schedule()
 
     fs.search_dir_modif()
 

@@ -7,12 +7,11 @@ import create_faker_data as cfd
 
 def job1():
     dir_path = ('static/search_dir_list.txt')
+    print(f"dir 검사를 시작합니다.")
     with open(dir_path, 'r', encoding='utf8') as f :
         lines = f.readlines()
         for line in lines :
-            
             new_line = os.path.join(line).replace("\n", "")
-
             if os.path.isdir(os.path.join(new_line)):
                 all_files = os.listdir(os.path.join(new_line))
                 for file in all_files:

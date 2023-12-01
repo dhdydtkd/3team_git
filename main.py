@@ -23,10 +23,10 @@ if __name__ == "__main__":
     if st.button('디렉토리 수동 검사') : 
         warning_file_list = dwf.dir_warning_check(dir_path)
         if warning_file_list : 
-            st.warning('현재 압축기능이 개발되지 않았습니다.')
-            # for file in warning_file_list:
-            #     st.write(file)
+            for file in warning_file_list:
+                st.write(file)
             # df.zip_test(warning_file_list)
+            st.warning('현재 압축기능이 개발되지 않았습니다.')
             # st.success('압축 및 다운로드 완료')
         else : 
             st.warning('경로를 찾을 수 없습니다.')
@@ -55,7 +55,7 @@ if __name__ == "__main__":
                         df.detec_file(f'{dir_path_member_data}/{uploaded_file.name}')
                         st.success('해당 파일의 마스킹이 완료되었습니다.')
                     elif uploaded_file.name.endswith('.xlsx'):
-                        df.detec_xlsx_file(f'{dir_path_member_data},{dir_path_member_data}/{uploaded_file.name}', uploaded_file.name)
+                        df.detec_xlsx_file(f'{dir_path_member_data}',f'{dir_path_member_data}/{uploaded_file.name}', uploaded_file.name)
                         st.success('해당 파일의 마스킹이 완료되었습니다.')
                     else:
                         st.warning('txt, log, xlsx 파일만 업로드 해주세요.')

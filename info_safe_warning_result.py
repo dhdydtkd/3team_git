@@ -11,6 +11,7 @@ def info_safe_warning_result(file_name):
     email_pattern = r"[a-zA-Z0-9._+-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
     info_warning_line = []
     safe_warning_line = []
+    check_result = 'Safe'    
 
     if file_name.endswith('.xlsx'):
         wb = openpyxl.load_workbook(file_name)
@@ -55,7 +56,7 @@ def info_safe_warning_result(file_name):
         check_result = 'Unknown Extension'   
     if info_warning_line or safe_warning_line:
         check_result = 'Not Safe'    
-    
+        
     event_data = {
         'file_path' : file_name,
         'info_warning_line' : info_warning_line,

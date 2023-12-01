@@ -1,2 +1,2 @@
-member_data
-static
+E:\3team_project\member_data
+E:\3team_project\custom_data

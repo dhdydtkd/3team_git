@@ -120,7 +120,7 @@ def mask_phone(match):
     phone = match.group(0)
     num1,num2,num3 = phone.split('-')
     num2 = "***"
-    masked_phone = num1 + num2 +num3
+    masked_phone = num1 +'-'+ num2 +'-'+ num3
     print(masked_phone)
     return masked_phone
 

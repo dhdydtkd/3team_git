@@ -2,7 +2,7 @@
 import re
 import os
 import zipfile
-
+from datetime import datetime
 # 검출 여부 확인 set 사용해 중복제거
 
 
@@ -64,8 +64,9 @@ def detec_file(file_name):
             
 # 파일 압축 
 def zip_test(detection_Nonpass_File_list):
+    print('zip_test')
     if detection_Nonpass_File_list:
-        zip_file = zipfile.ZipFile("detection.zip", "w")
+        zip_file = zipfile.ZipFile(f"warning_zip/{datetime.now().strftime('%Y_%m_%d_%H_%M_%S')}detection.zip", "w")
         for root, dirs, files in os.walk(detection_Nonpass_File_list):
             for file in files:
                 print(f'{file} {detection_Nonpass_File_list}')

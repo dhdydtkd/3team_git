@@ -4,7 +4,6 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from dotenv import load_dotenv
 import os
 import re
 import pandas as pd
@@ -88,16 +87,13 @@ def check(file_path):
     phone_pattern = r'\d{3}-\d{3,4}-\d{4}'
     email_pattern = r"[a-zA-Z0-9._+-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
     
-
-    if file_name.endswitch('.xlsx'):
+    if file_name.endswith('.xlsx'):
         wb = openpyxl.load_workbook(file_name)
         sheet = wb.active
 
         for index, row in enumerate(sheet.iter_rows()):
             for i, cell in enumerate(row[:7]):
-                if re.findall(phone_pattern,str(cell.value)):
-                    info_warning = True
-                elif re.findall(email_pattern,str(cell.value)):
+                if re.findall(phone_pattern,str(cell.value)) or re.findall(email_pattern,str(cell.value)) :
                     info_warning = True
                 if i==6 and cell.value==False : 
                     safe_warning = True
@@ -111,43 +107,41 @@ def check(file_path):
     #print(f'info_warning_line : {info_warning_line}');
     #print(f'safe_warning_line : {safe_warning_line}');
 
-    if file_name.endswith('.txt'):
-        info_warning = False
-        safe_warning = False
+    elif file_name.endswith('.txt'):
         with open(f'{file_name}','r',encoding='utf-8') as f:
             lines = f.readlines()
-            head_info=list(map(str,lines[0].split('|')))
-            info_warning = False
-            for index, line in enumerate(lines[1:]):
-                if re.findall(phone_pattern,line.split('|')[1]):
+            for index, line in enumerate(lines):
+                if re.findall(phone_pattern,line) or re.findall(email_pattern,line):
                     info_warning = True
-                elif re.findall(email_pattern,line.split('|')[2]):
-                    info_warning = True
-                if line.split('|')[6] == 'False':
-                    safe_warning = True
                 if info_warning:
                     info_warning_line.append(index+1)
-                if safe_warning:
-                    safe_warning_line.append(index+1)
                 info_warning = False
-                safe_warning = False
-
-        #print(f'info_warning_line : {info_warning_line}');
-        #print(f'safe_warning_line : {safe_warning_line}');
-
+    elif file_name.endswith('.log'):
+        with open(file_name,'r',encoding='utf-8') as f:
+            lines = f.readlines()
+            for index, line in enumerate(lines):
+                if re.findall(phone_pattern,line) or re.findall(email_pattern,line):
+                    info_warning = True
+                if info_warning:
+                    info_warning_line.append(index+1)
+                info_warning = False
+    else:
+        print('알 수 없는 파일 확장자')            
+    
     warning_line = [0]
     # 0=위험정보 검출안됨, 1=info_warning_line, 2=ip_warning_line, 3=ip&info_warning_line
     if info_warning_line:
         warning_line.append(info_warning_line)
     if safe_warning_line:
         warning_line.append(safe_warning_line)
-
     if info_warning_line and safe_warning_line:
-        warning_line[0] = 3
-        sendSlackWebhook(file_name,warning_line)
-        sendsmtp(file_name,warning_line)
+            warning_line[0] = 3
+            print('위험정보있음')
+            sendSlackWebhook(file_name,warning_line)
+            sendsmtp(file_name,warning_line)
     elif info_warning_line:
         warning_line[0] = 1
+        print('위험정보있음')
         sendSlackWebhook(file_name,warning_line)
         sendsmtp(file_name,warning_line)
     elif safe_warning_line:

@@ -12,11 +12,12 @@ import openpyxl
 
 # Slack channel to send the message to
 
-def sendSlackWebhook(file_path,SLACK_API_TOKEN):
+def sendSlackWebhook(file_path):
+    SLACK_API_TOKEN = 'xoxb-6262233246663-6279292640596-VkFB8dNYcX4E8QS3GXKkzUzW'
     client = WebClient(token=SLACK_API_TOKEN)
     try:
         response = client.files_upload(
-            channels="#python-test",
+            channels="#프로젝트",
             file=file_path,
             title=f"위험정보 포함 파일입니다."
         )
@@ -24,10 +25,10 @@ def sendSlackWebhook(file_path,SLACK_API_TOKEN):
     except SlackApiError as e:
         print(f"오류 발생 {e}")
 
-def sendsmtp(ID_PASS,file_name,error_report):        
-    
-    SECRET_ID = ID_PASS[0]
-    SECRET_PASS = ID_PASS[1]
+def sendsmtp(file_name,error_report):        
+   
+    SECRET_ID = 'skyujin4039'
+    SECRET_PASS = '12341234!'
 
     smtp= smtplib.SMTP('smtp.naver.com',587)
     smtp.ehlo()
@@ -35,8 +36,8 @@ def sendsmtp(ID_PASS,file_name,error_report):
 
     smtp.login(SECRET_ID,SECRET_PASS)
 
-    myemail = 'ggggame93@naver.com'
-    youremail = 'ggggame93@naver.com'
+    myemail = 'skyujin4039@naver.com'
+    youremail = 'skyujin4039@naver.com'
 
     msg = MIMEMultipart()
 
@@ -59,7 +60,11 @@ def sendsmtp(ID_PASS,file_name,error_report):
             {error_report[1]}\n
             목록 줄의 IP가 현재 불안정한 상태입니다.\n
             {error_report[2]}
-        """    
+        """
+    else:
+        text =f"""
+            파일 전송 입니다.
+        """   
     contentPart = MIMEText(text)
     msg.attach(contentPart)
 
@@ -72,11 +77,9 @@ def sendsmtp(ID_PASS,file_name,error_report):
     smtp.sendmail(myemail,youremail,msg.as_string())
     smtp.quit()
 
-def check(file_path,ID_PASS,SLACK_API_TOKEN):
+def check(file_path,ID_PASS):
     file_name = file_path
-    wb = openpyxl.load_workbook(file_name)
-    sheet = wb.active
-
+    
     info_warning_line = []
     safe_warning_line = []
 
@@ -84,20 +87,26 @@ def check(file_path,ID_PASS,SLACK_API_TOKEN):
     safe_warning = False
     phone_pattern = r'\d{3}-\d{3,4}-\d{4}'
     email_pattern = r"[a-zA-Z0-9._+-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,4}"
-    for index, row in enumerate(sheet.iter_rows()):
-        for i, cell in enumerate(row[:7]):
-            if re.findall(phone_pattern,str(cell.value)):
-                info_warning = True
-            elif re.findall(email_pattern,str(cell.value)):
-                info_warning = True
-            if i==6 and cell.value==False : 
-                safe_warning = True
-        if info_warning:
-            info_warning_line.append(index)
-        if safe_warning:
-            safe_warning_line.append(index)
-        info_warning = False
-        safe_warning = False
+    
+
+    if file_name.endswitch('.xlsx'):
+        wb = openpyxl.load_workbook(file_name)
+        sheet = wb.active
+
+        for index, row in enumerate(sheet.iter_rows()):
+            for i, cell in enumerate(row[:7]):
+                if re.findall(phone_pattern,str(cell.value)):
+                    info_warning = True
+                elif re.findall(email_pattern,str(cell.value)):
+                    info_warning = True
+                if i==6 and cell.value==False : 
+                    safe_warning = True
+            if info_warning:
+                info_warning_line.append(index)
+            if safe_warning:
+                safe_warning_line.append(index)
+            info_warning = False
+            safe_warning = False
 
     #print(f'info_warning_line : {info_warning_line}');
     #print(f'safe_warning_line : {safe_warning_line}');
@@ -135,15 +144,15 @@ def check(file_path,ID_PASS,SLACK_API_TOKEN):
 
     if info_warning_line and safe_warning_line:
         warning_line[0] = 3
-        sendSlackWebhook(file_name,warning_line,SLACK_API_TOKEN)
-        sendsmtp(ID_PASS,file_name,warning_line)
+        sendSlackWebhook(file_name,warning_line)
+        sendsmtp(file_name,warning_line)
     elif info_warning_line:
         warning_line[0] = 1
-        sendSlackWebhook(file_name,warning_line,SLACK_API_TOKEN)
-        sendsmtp(ID_PASS,file_name,warning_line)
+        sendSlackWebhook(file_name,warning_line)
+        sendsmtp(file_name,warning_line)
     elif safe_warning_line:
         warning_line[0] = 2
-        sendSlackWebhook(file_name,warning_line,SLACK_API_TOKEN)
-        sendsmtp(ID_PASS,file_name,warning_line)
+        sendSlackWebhook(file_name,warning_line)
+        sendsmtp(file_name,warning_line)
     else:
         print('위험 정보 검출 안됨')

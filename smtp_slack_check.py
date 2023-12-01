@@ -90,16 +90,16 @@ def check(file_path):
     if info_warning_line and safe_warning_line:
             warning_line[0] = 3
             print('위험정보있음')
-            sendSlackWebhook(file_name,warning_line)
+            sendSlackWebhook(file_name)
             sendsmtp(file_name,warning_line)
     elif info_warning_line:
         warning_line[0] = 1
         print('위험정보있음')
-        sendSlackWebhook(file_name,warning_line)
+        sendSlackWebhook(file_name)
         sendsmtp(file_name,warning_line)
     elif safe_warning_line:
         warning_line[0] = 2
-        sendSlackWebhook(file_name,warning_line)
+        sendSlackWebhook(file_name)
         sendsmtp(file_name,warning_line)
     else:
         print('위험 정보 검출 안됨')

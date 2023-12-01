@@ -6,7 +6,7 @@ import dir_warning_find as dwf
 import info_safe_warning_result as iswr
 import detec_file as df
 import openpyxl
-
+import smtp_slack_check as sscheck
 if __name__ == "__main__":
 
     # sschedule.job2()
@@ -45,6 +45,8 @@ if __name__ == "__main__":
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.xlsx') or uploaded_file.name.endswith('.txt') or uploaded_file.name.endswith('.log'):
             info_warning_line, safe_warning_line = iswr.info_safe_warning_result(f'{dir_path_member_data}/{uploaded_file.name}')
+            sscheck.check(f'{dir_path_member_data}/{uploaded_file.name}')
+
             check = dwf.warning_text_print(info_warning_line, safe_warning_line)
             if check:
                 if st.button('검사한 파일 마스킹 하기'):

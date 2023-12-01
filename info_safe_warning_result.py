@@ -1,11 +1,10 @@
 import os
 import re
 import openpyxl
-
+import mongo
 
 def info_safe_warning_result(file_name):
-    print(f'검색할 {file_name}')
-    
+    print(f'검색할 {file_name}')  
     info_warning = False
     safe_warning = False
     phone_pattern = r'\d{3}-\d{3,4}-\d{4}'
@@ -53,4 +52,15 @@ def info_safe_warning_result(file_name):
                 info_warning = False
     else:
         print('알 수 없는 파일 확장자')
+        check_result = 'Unknown Extension'   
+    if info_warning_line or safe_warning_line:
+        check_result = 'Not Safe'    
+    
+    event_data = {
+        'file_path' : file_name,
+        'info_warning_line' : info_warning_line,
+        'safe_warning_line' : safe_warning_line,
+        'check_result' : check_result
+    }
+    mongo.mongoInsert(event_data)
     return info_warning_line, safe_warning_line

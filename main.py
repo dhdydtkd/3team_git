@@ -52,5 +52,9 @@ if __name__ == "__main__":
                 if st.button('검사한 파일 마스킹 하기'):
                     if uploaded_file.name.endswith('.txt') or uploaded_file.name.endswith('.log'):
                         df.detec_file(f'{dir_path_member_data}/{uploaded_file.name}')
+                        st.success('해당 파일의 마스킹이 완료되었습니다.')
+                    elif uploaded_file.name.endswith('.xlsx'):
+                        df.detec_xlsx_file(f'{dir_path_member_data},{dir_path_member_data}/{uploaded_file.name}', uploaded_file.name)
+                        st.success('해당 파일의 마스킹이 완료되었습니다.')
                     else:
-                        st.warning('현재 txt, log 파일만 마스킹 가능합니다.')
+                        st.warning('txt, log, xlsx 파일만 업로드 해주세요.')

@@ -3,6 +3,8 @@ import re
 import os
 import zipfile
 from datetime import datetime
+import openpyxl
+
 # 검출 여부 확인 set 사용해 중복제거
 
 
@@ -63,6 +65,27 @@ def detec_file(file_name):
                     detec_lines[num] = phone_pattern.sub(mask_phone,line)
                     # 수정할때마다 넣어줌
                     ex.writelines(detec_lines)
+
+def detec_xlsx_file(dir_path_member_data,file_name, file_full_name):
+    workbook = openpyxl.load_workbook(file_name)
+    sheet = workbook.active
+
+    masked_workbook = openpyxl.Workbook()
+    masked_sheet = masked_workbook.active
+
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        name, phone_number, email, address  = row[0], row[1], row[2], row[3]
+        username, domain = email.split('@')
+        masked_email = '*' * len(username) + '@' + domain
+        num1,num2,num3 = phone_number.split('-')
+        if(len(num2) == 3):
+            num2 = "***"
+        elif(len(num2) == 4):
+            num2 = "****"
+        masked_phone = num1 +'-'+ num2 +'-'+ num3
+        maksed_data= [name, address, masked_phone,masked_email]
+        masked_sheet.append(maksed_data)
+    masked_workbook.save(f"{dir_path_member_data}/{file_full_name.split('.')[0]}_detec.xlsx")
             
 # 파일 압축 
 def zip_test(detection_Nonpass_File_list):
@@ -86,7 +109,6 @@ def mask_phone(match):
     elif(len(num2) == 4):
         num2 = "****"
     masked_phone = num1 +'-'+ num2 +'-'+ num3
-    print(masked_phone)
     return masked_phone
 
 # email 마스킹

@@ -2,10 +2,10 @@ import streamlit as st
 import os
 
 def search_dir_modif():
-    st.title("디렉토리 내 파일검사")
+    st.title("스케쥴러로 검사할 디렉토리 내 파일검사")
 
     dir_path = 'static/search_dir_list.txt'
-    st.subheader('확인할 디렉토리 리스트')
+    st.subheader('검사할 디렉토리 리스트')
     origin_dir_list = ''
     delete_dir_flag = False
     delete_dir_name = ''

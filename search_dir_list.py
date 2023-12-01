@@ -3,7 +3,7 @@ import os
 
 def search_dir_modif():
     st.title("스케쥴러로 검사할 디렉토리 내 파일검사")
-
+    st.warning('현재 스케쥴러기능이 개발 완료되지 않았습니다.')
     dir_path = 'static/search_dir_list.txt'
     st.subheader('검사할 디렉토리 리스트')
     origin_dir_list = ''

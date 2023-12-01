@@ -5,8 +5,8 @@ import search_dir_list as fs
 import dir_warning_find as dwf
 import info_safe_warning_result as iswr
 import detec_file as df
-import openpyxl
 import smtp_slack_check as sscheck
+
 if __name__ == "__main__":
 
     # sschedule.job2()
@@ -23,10 +23,11 @@ if __name__ == "__main__":
     if st.button('디렉토리 수동 검사') : 
         warning_file_list = dwf.dir_warning_check(dir_path)
         if warning_file_list : 
-            for file in warning_file_list:
-                st.write(file)
-            df.zip_test(warning_file_list)
-            st.success('압축 및 다운로드 완료')
+            st.warning('현재 압축기능이 개발되지 않았습니다.')
+            # for file in warning_file_list:
+            #     st.write(file)
+            # df.zip_test(warning_file_list)
+            # st.success('압축 및 다운로드 완료')
         else : 
             st.warning('경로를 찾을 수 없습니다.')
         #결과 뿌려줘야함

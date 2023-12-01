@@ -24,8 +24,8 @@ def detec_file_list(detection_Nonpass_Files):
                         # re.sub는 치환해주는 메소드
                         email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
                         phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3,4}[-.\s]?\d{4}\b')
-                        detec_lines[num] = email_pattern.sub(mask_email_id, line)
                         detec_lines[num] = phone_pattern.sub(mask_phone,line)
+                        detec_lines[num] = email_pattern.sub(mask_email_id, line)
                         # 수정할때마다 넣어줌
                         ex.writelines(detec_lines)
                 elif matches_Phone:
@@ -49,10 +49,12 @@ def detec_file(file_name):
             if matches:
                 with open(detec_file_Path,'w',encoding='utf-8') as ex:
                     # re.sub는 치환해주는 메소드
+                    ''
                     email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
                     phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3,4}[-.\s]?\d{4}\b')
-                    detec_lines[num] = email_pattern.sub(mask_email_id, line)
+                    
                     detec_lines[num] = phone_pattern.sub(mask_phone,line)
+                    detec_lines[num] = email_pattern.sub(mask_email_id, line)
                     # 수정할때마다 넣어줌
                     ex.writelines(detec_lines)
             elif matches_Phone:
@@ -89,10 +91,12 @@ def mask_phone(match):
 
 # email 마스킹
 def mask_email_id(match):
+    
     email = match.group(0)
+    
     # 이메일 주소에서 아이디 부분만 추출하여 가리기 (예: user@example.com -> u****@example.com)
     username, domain = email.split('@')
-    masked_username = username[0] + '*' * (len(username) - 1)
+    masked_username = '*' * len(username)
     masked_email = masked_username + '@' + domain
     return masked_email
 

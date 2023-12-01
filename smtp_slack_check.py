@@ -9,7 +9,7 @@ import info_safe_warning_result as iswr
 # Slack channel to send the message to
 
 def sendSlackWebhook(file_path):
-    SLACK_API_TOKEN = 'xoxb-6262233246663-6279292640596-VkFB8dNYcX4E8QS3GXKkzUzW'
+    SLACK_API_TOKEN = 'xoxb-6262233246663-6290343574897-Gr46S46yJQIvwFenBCMzWzip'
     client = WebClient(token=SLACK_API_TOKEN)
     try:
         response = client.files_upload(

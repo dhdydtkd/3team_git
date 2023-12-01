@@ -21,7 +21,7 @@ def info_safe_warning_result(file_name):
             for i, cell in enumerate(row[:7]):
                 if re.findall(phone_pattern,str(cell.value)) or re.findall(email_pattern,str(cell.value)) :
                     info_warning = True
-                if i==6 and cell.value==False : 
+                if i==6 and cell.value=='FALSE' : 
                     safe_warning = True
             if info_warning:
                 info_warning_line.append(index)

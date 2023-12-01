@@ -26,6 +26,7 @@ if __name__ == "__main__":
             for file in warning_file_list:
                 st.write(file)
             df.zip_test(warning_file_list)
+            st.success('압축 및 다운로드 완료')
         else : 
             st.warning('경로를 찾을 수 없습니다.')
         #결과 뿌려줘야함
@@ -40,10 +41,14 @@ if __name__ == "__main__":
     uploaded_file = st.file_uploader("파일 검사", type=['xlsx', 'txt', 'log'])
     #print(f'uploaded_file : [{uploaded_file}]')
     warning_file_list = []
+    dir_path_member_data = 'member_data'
     if uploaded_file is not None:
         if uploaded_file.name.endswith('.xlsx') or uploaded_file.name.endswith('.txt') or uploaded_file.name.endswith('.log'):
-            info_warning_line, safe_warning_line = iswr.info_safe_warning_result(f'member_data/{uploaded_file.name}')
+            info_warning_line, safe_warning_line = iswr.info_safe_warning_result(f'{dir_path_member_data}/{uploaded_file.name}')
             check = dwf.warning_text_print(info_warning_line, safe_warning_line)
             if check:
                 if st.button('검사한 파일 마스킹 하기'):
-                    print("마스킹해야함")
+                    if uploaded_file.name.endswith('.txt') or uploaded_file.name.endswith('.log'):
+                        df.detec_file(f'{dir_path_member_data}/{uploaded_file.name}')
+                    else:
+                        st.warning('현재 txt, log 파일만 마스킹 가능합니다.')

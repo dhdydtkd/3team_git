@@ -26,30 +26,6 @@ def text_check(dir_path):
     print(f"검출{detection_Nonpass_File}")
     detec_file(detection_Nonpass_File)
         
-#아직 안됨
-def docx_checker(file_Name):
-    doc = Document('D:\\team_3\\dummy\\templates.docx')
-    print(11)
-    # 이름 추출을 위한 정규식 패턴
-    name_pattern = re.compile(r'\b[A-Za-z]+(?: [A-Za-z]+)?\b')
-
-    # 이메일 추출을 위한 정규식 패턴
-    email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
-
-    # 전화번호 추출을 위한 정규식 패턴
-    phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b')
-    def mask_name(match):
-        name = match.group(0)
-        # 이름에서 아이디 부분만 추출하여 마스킹 (예: John Doe -> J*** D**)
-        masked_name = ' '.join([name[0] + '*' * (len(part) - 1) if part.isalpha() else part for part in name.split()])
-        return masked_name
-    
-    for paragraph in doc.paragraphs:
-        print (paragraph.text)
-        name_pattern.sub(mask_name,(paragraph.text))
-    
-    doc.save('templates')
-
 # txt, log, py 확인
 def txt_checker(file_Name):
     file_Path = os.path.join(dir_path,file_Name)
@@ -61,7 +37,7 @@ def txt_checker(file_Name):
         for num, line in enumerate(lines):
                 #검출 시 detection_Nonpass_File에 파일이름 추가
             matches = re.findall(r"[\w\.-]+@[\w\.-]+", line)
-            matches_Phone = re.findall(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b',line)
+            matches_Phone = re.findall(r'\b\d{3}[-.\s]?\d{3,4}[-.\s]?\d{4}\b',line)
             if matches:
                 print(f"검출 {matches} fileName : {file_Name}")
                 detection_Nonpass_File.add(file_Name)
@@ -85,20 +61,22 @@ def detec_file(detection_Nonpass_Files):
         for num, line in enumerate(detec_lines):
                 #검출 시 마스킹 + detection_Nonpass_File에 파일이름 추가
                 matches = re.findall(r"[\w\.-]+@[\w\.-]+", line)
-                matches_Phone = re.findall(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b',line)
+                matches_Phone = re.findall(r'\b\d{3}[-.\s]?\d{3,4}[-.\s]?\d{4}\b',line)
                 if matches:
                     with open(detec_file_Path,'w',encoding='utf-8') as ex:
                         # re.sub는 치환해주는 메소드
                         email_pattern = re.compile(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b')
-                        phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b')
+                        phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3,4}[-.\s]?\d{4}\b')
                         detec_lines[num] = email_pattern.sub(mask_email_id, line)
                         detec_lines[num] = phone_pattern.sub(mask_phone,line)
                         # 수정할때마다 넣어줌
                         ex.writelines(detec_lines)
                 elif matches_Phone:
                     with open(detec_file_Path,'w',encoding='utf-8') as ex:
-                        phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b')
+                        # 핸드폰이 3자리일때
+                        phone_pattern = re.compile(r'\b\d{3}[-.\s]?\d{3,4}[-.\s]?\d{4}\b')
                         detec_lines[num] = phone_pattern.sub(mask_phone,line)
+
                         # 수정할때마다 넣어줌
                         ex.writelines(detec_lines)
             
@@ -119,7 +97,10 @@ def zip_test(dir_path):
 def mask_phone(match):
     phone = match.group(0)
     num1,num2,num3 = phone.split('-')
-    num2 = "***"
+    if(len(num2) == 3):
+        num2 = "***"
+    elif(len(num2) == 4):
+        num2 = "****"
     masked_phone = num1 +'-'+ num2 +'-'+ num3
     print(masked_phone)
     return masked_phone

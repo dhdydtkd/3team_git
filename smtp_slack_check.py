@@ -77,7 +77,7 @@ def sendsmtp(file_name,error_report):
     smtp.sendmail(myemail,youremail,msg.as_string())
     smtp.quit()
 
-def check(file_path,ID_PASS):
+def check(file_path):
     file_name = file_path
     
     info_warning_line = []
